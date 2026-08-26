@@ -10,6 +10,8 @@ const ApiError = require('./utils/ApiError');
 const requireAuth = require('./middleware/requireAuth.middleware.js');
 require('dotenv').config();
 
+const ApiResponse = require('./utils/ApiResponse.js');
+
 const app = express();
 
 let corsOptions = {
@@ -36,6 +38,14 @@ app.get(
   asyncHandler(async (req, res) => {
     res.json({ userId: req.auth.userId });
   })
+);
+
+app.get(
+  '/test-protected',
+  requireAuth,
+  asyncHandler(async (req, res) =>
+    res.json(new ApiResponse(200, { clerkUserId: req.auth.userId }))
+  )
 );
 
 app.use(notFound);

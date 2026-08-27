@@ -9,6 +9,10 @@ const ApiError = require('../utils/ApiError.js');
 const requireAuth = (req, res, next) => {
   try {
     const auth = getAuth(req);
+    console.log('--- Auth Debug ---');
+    console.log('Header:', req.headers.authorization ? 'Present' : 'Missing');
+    console.log('Auth Object:', auth);
+    console.log('User ID:', auth?.userId);
 
     if (!auth || !auth.userId) {
       return next(

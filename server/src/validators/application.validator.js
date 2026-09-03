@@ -14,7 +14,7 @@ const createApplicationSchema = z.object({
       currency: z.string().optional(),
     })
     .optional(),
-  jobUrl: z.string().url().optional(),
+  jobUrl: z.url().optional(),
   status: z
     .enum([
       'Wishlist',
@@ -27,7 +27,7 @@ const createApplicationSchema = z.object({
     .optional(),
   applicationDate: z.coerce.date().optional(),
   recruiterName: z.string().optional(),
-  recruiterEmail: z.string().email().optional(),
+  recruiterEmail: z.email().optional(),
   notes: z.string().optional(),
   resumeId: z
     .string()

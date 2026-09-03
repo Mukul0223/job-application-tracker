@@ -6,6 +6,7 @@ const errorHandler = require('./middleware/errorHandler.middleware');
 const healthRouter = require('./routes/health.routes.js');
 const userRouter = require('./routes/user.routes.js');
 const applicationRouter = require('./routes/application.routes.js');
+const interviewRouter = require('./routes/interview.routes.js');
 require('dotenv').config();
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(clerkMiddleware());
 app.use('/api/v1', healthRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/applications', applicationRouter);
+app.use('/api/v1/interviews', interviewRouter);
 
 app.use(notFound);
 app.use(errorHandler);

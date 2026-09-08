@@ -1,1 +1,16 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Explicitly lock root layout containers to the viewport */
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}

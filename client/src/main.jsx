@@ -1,13 +1,15 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import './index.css';
-import App from './App.jsx';
-import AxiosBridge from './components/AxiosBridge.jsx';
-
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ClerkProvider } from '@clerk/react';
 
-// Import your Publishable Key
+import App from './App.jsx';
+import AxiosBridge from './components/AxiosBridge.jsx';
+import queryClient from './lib/queryClient';
+import './index.css';
+
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
@@ -16,12 +18,15 @@ if (!PUBLISHABLE_KEY) {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-      <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
-        <AxiosBridge>
-          <App />
-        </AxiosBridge>
-      </ClerkProvider>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+          <AxiosBridge>
+            <App />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </AxiosBridge>
+        </ClerkProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
   </StrictMode>
 );

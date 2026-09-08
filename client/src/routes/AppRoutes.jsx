@@ -1,5 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute.jsx';
+import AppShell from '../components/layout/AppShell.jsx';
+
 import LandingPage from '../pages/LandingPage.jsx';
 import DashboardPage from '../pages/DashboardPage.jsx';
 import AnalyticsPage from '../pages/AnalyticsPage.jsx';
@@ -19,12 +21,14 @@ const AppRoutes = () => {
       <Route path="/sign-up/*" element={<SignUpPage />} />
 
       <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/kanban" element={<KanbanPage />} />
-        <Route path="/applications/:id" element={<ApplicationDetailPage />} />
-        <Route path="/calendar" element={<CalendarPage />} />
-        <Route path="/analytics" element={<AnalyticsPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
+        <Route element={<AppShell />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/kanban" element={<KanbanPage />} />
+          <Route path="/applications/:id" element={<ApplicationDetailPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/analytics" element={<AnalyticsPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+        </Route>
       </Route>
 
       <Route path="*" element={<NotFoundPage />} />

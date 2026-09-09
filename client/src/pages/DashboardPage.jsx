@@ -1,71 +1,107 @@
 import {
   useApplications,
-  useApplicationsBoard,
   useCreateApplication,
-  useUpdateApplicationStatus,
 } from '../hooks/useApplications';
+import { Plus, Loader2, AlertCircle, Briefcase } from 'lucide-react';
 
 const DashboardPage = () => {
-  const { data: list, isLoading, isError, error } = useApplications();
-  const { data: board } = useApplicationsBoard();
+  const {
+    data: applicationsData,
+    isLoading,
+    isError,
+    error,
+  } = useApplications();
+  const createApplicationMutation = useCreateApplication();
 
-  // 2. Test Mutations
-  const createMutation = useCreateApplication();
-  const updateStatusMutation = useUpdateApplicationStatus();
+  // Safely extract the array regardless of whether backend returns a direct array or a paginated object
+  const applications = Array.isArray(applicationsData)
+    ? applicationsData
+    : applicationsData?.applications || applicationsData?.docs || [];
 
-  if (isLoading) return <div>Loading applications...</div>;
-  if (isError) return <div>Error: {error.message}</div>;
-
-  const handleTestCreate = () => {
-    createMutation.mutate({
-      companyName: 'Test Company ' + Date.now(),
-      jobTitle: 'Frontend Dev',
+  const handleAddTest = () => {
+    createApplicationMutation.mutate({
+      companyName: `Company ${Math.floor(Math.random() * 1000)}`,
+      jobTitle: 'Full Stack Engineer',
       status: 'Applied',
     });
   };
 
-  const handleTestStatusUpdate = (id, currentStatus) => {
-    const newStatus = currentStatus === 'Applied' ? 'Interview' : 'Applied';
-    updateStatusMutation.mutate({ id, status: newStatus });
-  };
+  // 1. Loading State
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-75 text-gray-500">
+        <Loader2 className="mr-2 h-6 w-6 animate-spin text-blue-600" />
+        <span>Fetching live applications from backend...</span>
+      </div>
+    );
+  }
 
+  // 2. Error State
+  if (isError) {
+    return (
+      <div className="flex items-center p-4 m-6 text-red-800 bg-red-50 rounded-lg border border-red-200">
+        <AlertCircle className="mr-2 h-5 w-5 shrink-0" />
+        <span>Error fetching applications: {error.message}</span>
+      </div>
+    );
+  }
+
+  // 3. Success State
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h2>Step 8.5 Quality Check</h2>
-
-      {/* --- TEST 1: Creation & Auto-Invalidation --- */}
-      <section style={{ marginBottom: '20px' }}>
-        <h3>1. Cache Invalidation Test</h3>
-        <button onClick={handleTestCreate} disabled={createMutation.isPending}>
-          {createMutation.isPending
-            ? 'Creating...'
-            : '+ Create Test Application'}
+    <div className="p-6 max-w-4xl mx-auto space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <button
+          onClick={handleAddTest}
+          disabled={createApplicationMutation.isPending}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+        >
+          {createApplicationMutation.isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Plus className="h-4 w-4" />
+          )}
+          Add Test Application
         </button>
-      </section>
+      </div>
 
-      {/* --- TEST 2: Board View & Optimistic Updates --- */}
-      <section>
-        <h3>2. Optimistic Updates Test (Board View)</h3>
-        {board?.map((app) => (
-          <div
-            key={app._id}
-            style={{
-              border: '1px solid #ccc',
-              padding: '10px',
-              margin: '8px 0',
-              borderRadius: '4px',
-            }}
-          >
-            <strong>{app.company}</strong> — Status: <em>{app.status}</em>
-            <button
-              onClick={() => handleTestStatusUpdate(app._id, app.status)}
-              style={{ marginLeft: '10px' }}
-            >
-              Toggle Status (Optimistic)
-            </button>
-          </div>
-        ))}
-      </section>
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+          Your Live Applications
+        </h2>
+
+        {applications.length === 0 ? (
+          <p className="text-gray-500 text-sm">
+            No applications found in Atlas database.
+          </p>
+        ) : (
+          <ul className="divide-y divide-gray-100">
+            {applications.map((app) => (
+              <li
+                key={app._id}
+                className="py-3 flex items-center justify-between"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                    <Briefcase className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">
+                      {app.company || app.companyName}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {app.position || app.jobTitle || 'Software Engineer'}
+                    </p>
+                  </div>
+                </div>
+                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">
+                  {app.status}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };

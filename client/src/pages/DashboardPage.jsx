@@ -1,109 +1,137 @@
+import { useState } from 'react';
+import { useApplications } from '../hooks/useApplications';
+import ApplicationTable from '../components/applications/ApplicationTable';
+import ApplicationFilters from '../components/applications/ApplicationFilters';
+import ApplicationForm from '../components/applications/ApplicationForm';
 import {
-  useApplications,
-  useCreateApplication,
-} from '../hooks/useApplications';
-import { Plus, Loader2, AlertCircle, Briefcase } from 'lucide-react';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '../components/ui/dialog';
+import { Button } from '../components/ui/button';
+import { Plus, Loader2, AlertCircle } from 'lucide-react';
 
 const DashboardPage = () => {
-  const {
-    data: applicationsData,
-    isLoading,
-    isError,
-    error,
-  } = useApplications();
-  const createApplicationMutation = useCreateApplication();
+  // Page-level filter state passed into useApplications and ApplicationFilters
+  const [filters, setFilters] = useState({
+    search: undefined,
+    status: undefined,
+    sortBy: 'date',
+    sortOrder: 'desc',
+  });
 
-  // Safely extract the array regardless of whether backend returns a direct array or a paginated object
-  const applications = Array.isArray(applicationsData)
-    ? applicationsData
-    : applicationsData?.applications || applicationsData?.docs || [];
+  // Dialog state for create / edit modal
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingApplication, setEditingApplication] = useState(null);
 
-  const handleAddTest = () => {
-    createApplicationMutation.mutate({
-      companyName: `Company ${Math.floor(Math.random() * 1000)}`,
-      jobTitle: 'Full Stack Engineer',
-      status: 'Applied',
-    });
+  // Fetch applications with active filters via TanStack Query
+  const { data, isLoading, isError, error } = useApplications(filters);
+
+  const handleOpenCreateModal = () => {
+    setEditingApplication(null);
+    setIsDialogOpen(true);
   };
 
-  // 1. Loading State
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-75 text-gray-500">
-        <Loader2 className="mr-2 h-6 w-6 animate-spin text-blue-600" />
-        <span>Fetching live applications from backend...</span>
-      </div>
-    );
-  }
+  const handleOpenEditModal = (application) => {
+    setEditingApplication(application);
+    setIsDialogOpen(true);
+  };
 
-  // 2. Error State
-  if (isError) {
-    return (
-      <div className="flex items-center p-4 m-6 text-red-800 bg-red-50 rounded-lg border border-red-200">
-        <AlertCircle className="mr-2 h-5 w-5 shrink-0" />
-        <span>Error fetching applications: {error.message}</span>
-      </div>
-    );
-  }
+  const handleCloseModal = () => {
+    setIsDialogOpen(false);
+    setEditingApplication(null);
+  };
 
-  // 3. Success State
+  const applications = data?.applications || [];
+  const totalApplications = data?.total || 0;
+
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <button
-          onClick={handleAddTest}
-          disabled={createApplicationMutation.isPending}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-        >
-          {createApplicationMutation.isPending ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Plus className="h-4 w-4" />
-          )}
-          Add Test Application
-        </button>
-      </div>
-
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">
-          Your Live Applications
-        </h2>
-
-        {applications.length === 0 ? (
-          <p className="text-gray-500 text-sm">
-            No applications found in Atlas database.
-          </p>
-        ) : (
-          <ul className="divide-y divide-gray-100">
-            {applications.map((app) => (
-              <li
-                key={app._id}
-                className="py-3 flex items-center justify-between"
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
-                    <Briefcase className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900">
-                      {app.company || app.companyName}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {app.position || app.jobTitle || 'Software Engineer'}
-                    </p>
-                  </div>
-                </div>
-                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">
-                  {app.status}
+    <div className="min-h-screen bg-slate-50/50 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-6">
+        {/* Page Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+                Job Applications
+              </h1>
+              {!isLoading && (
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700">
+                  {totalApplications}
                 </span>
-              </li>
-            ))}
-          </ul>
+              )}
+            </div>
+            <p className="text-sm text-slate-500 mt-1">
+              Track, organize, and manage your active job search in one place.
+            </p>
+          </div>
+
+          <Button
+            onClick={handleOpenCreateModal}
+            className="inline-flex items-center gap-2 shadow-sm shrink-0"
+          >
+            <Plus className="h-4 w-4" />
+            New Application
+          </Button>
+        </div>
+
+        {/* Filter Bar */}
+        <ApplicationFilters filters={filters} onFiltersChange={setFilters} />
+
+        {/* Content Section: Loading, Error, or Table */}
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center p-16 bg-white border border-slate-200 rounded-xl shadow-sm">
+            <Loader2 className="h-8 w-8 text-blue-600 animate-spin mb-3" />
+            <p className="text-sm text-slate-500 font-medium">
+              Loading your applications...
+            </p>
+          </div>
+        ) : isError ? (
+          <div className="flex items-center gap-3 p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl">
+            <AlertCircle className="h-5 w-5 shrink-0 text-rose-600" />
+            <div>
+              <h4 className="font-semibold text-sm">
+                Failed to load applications
+              </h4>
+              <p className="text-xs text-rose-700 mt-0.5">
+                {error?.response?.data?.message ||
+                  error?.message ||
+                  'An unexpected error occurred.'}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <ApplicationTable
+            applications={applications}
+            onEdit={handleOpenEditModal}
+          />
         )}
       </div>
+
+      {/* Create / Edit Dialog Modal */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editingApplication ? 'Edit Application' : 'Add New Application'}
+            </DialogTitle>
+            <DialogDescription>
+              {editingApplication
+                ? 'Update the details of your application below.'
+                : 'Fill in the details below to track a new job application.'}
+            </DialogDescription>
+          </DialogHeader>
+
+          <ApplicationForm
+            mode={editingApplication ? 'edit' : 'create'}
+            application={editingApplication}
+            onSuccess={handleCloseModal}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
-
 export default DashboardPage;

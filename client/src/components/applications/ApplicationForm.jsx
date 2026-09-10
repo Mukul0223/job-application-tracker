@@ -1,4 +1,10 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { applicationFormSchema } from '../../schemas/application.schema.js';
+import {
+  useCreateApplication,
+  useUpdateApplication,
+} from '../../hooks/useApplications.js';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
@@ -15,22 +21,29 @@ export default function ApplicationForm({
   application = null,
   onSuccess,
 }) {
+  const createMutation = useCreateApplication();
+  const updateMutation = useUpdateApplication();
+
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
+
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
+    control,
     formState: { errors },
   } = useForm({
+    resolver: zodResolver(applicationFormSchema),
     defaultValues: {
       companyName: application?.companyName || '',
       jobTitle: application?.jobTitle || '',
       status: application?.status || 'Wishlist',
       location: application?.location || '',
       jobUrl: application?.jobUrl || '',
-      minSalary: application?.minSalary || '',
-      maxSalary: application?.maxSalary || '',
-      currency: application?.currency || 'USD',
+      salary: {
+        min: application?.salary?.min ?? '',
+        max: application?.salary?.max ?? '',
+        currency: application?.salary?.currency || 'USD',
+      },
       recruiterName: application?.recruiterName || '',
       recruiterEmail: application?.recruiterEmail || '',
       notes: application?.notes || '',
@@ -38,8 +51,23 @@ export default function ApplicationForm({
   });
 
   const onSubmit = (data) => {
-    console.log('Form Submitted:', data);
-    if (onSuccess) onSuccess();
+    if (mode === 'edit' && (application?._id || application?.id)) {
+      const id = application._id || application.id;
+      updateMutation.mutate(
+        { id, data },
+        {
+          onSuccess: () => {
+            if (onSuccess) onSuccess();
+          },
+        }
+      );
+    } else {
+      createMutation.mutate(data, {
+        onSuccess: () => {
+          if (onSuccess) onSuccess();
+        },
+      });
+    }
   };
 
   return (
@@ -50,12 +78,11 @@ export default function ApplicationForm({
           <label className="text-xs font-semibold text-slate-700">
             Company Name *
           </label>
-          <Input
-            placeholder="e.g. Google"
-            {...register('companyName', { required: true })}
-          />
+          <Input placeholder="e.g. Google" {...register('companyName')} />
           {errors.companyName && (
-            <p className="text-xs text-rose-500">Required</p>
+            <p className="text-xs text-rose-500">
+              {errors.companyName.message}
+            </p>
           )}
         </div>
 
@@ -66,9 +93,11 @@ export default function ApplicationForm({
           </label>
           <Input
             placeholder="e.g. Frontend Engineer"
-            {...register('jobTitle', { required: true })}
+            {...register('jobTitle')}
           />
-          {errors.jobTitle && <p className="text-xs text-rose-500">Required</p>}
+          {errors.jobTitle && (
+            <p className="text-xs text-rose-500">{errors.jobTitle.message}</p>
+          )}
         </div>
 
         {/* Status */}
@@ -76,28 +105,34 @@ export default function ApplicationForm({
           <label className="text-xs font-semibold text-slate-700">
             Status *
           </label>
-          <Select
-            defaultValue={watch('status')}
-            onValueChange={(val) => setValue('status', val)}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Status" />
-            </SelectTrigger>
-            <SelectContent>
-              {[
-                'Wishlist',
-                'Applied',
-                'Screening',
-                'Interview',
-                'Offer',
-                'Rejected',
-              ].map((s) => (
-                <SelectItem key={s} value={s}>
-                  {s}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Controller
+            control={control}
+            name="status"
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {[
+                    'Wishlist',
+                    'Applied',
+                    'Screening',
+                    'Interview',
+                    'Offer',
+                    'Rejected',
+                  ].map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {s}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.status && (
+            <p className="text-xs text-rose-500">{errors.status.message}</p>
+          )}
         </div>
 
         {/* Location */}
@@ -109,6 +144,9 @@ export default function ApplicationForm({
             placeholder="e.g. Remote / New York"
             {...register('location')}
           />
+          {errors.location && (
+            <p className="text-xs text-rose-500">{errors.location.message}</p>
+          )}
         </div>
 
         {/* Salary Row */}
@@ -120,8 +158,13 @@ export default function ApplicationForm({
             <Input
               type="number"
               placeholder="80000"
-              {...register('minSalary')}
+              {...register('salary.min')}
             />
+            {errors.salary?.min && (
+              <p className="text-xs text-rose-500">
+                {errors.salary.min.message}
+              </p>
+            )}
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-slate-700">
@@ -130,14 +173,24 @@ export default function ApplicationForm({
             <Input
               type="number"
               placeholder="120000"
-              {...register('maxSalary')}
+              {...register('salary.max')}
             />
+            {errors.salary?.max && (
+              <p className="text-xs text-rose-500">
+                {errors.salary.max.message}
+              </p>
+            )}
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-slate-700">
               Currency
             </label>
-            <Input placeholder="USD" {...register('currency')} />
+            <Input placeholder="USD" {...register('salary.currency')} />
+            {errors.salary?.currency && (
+              <p className="text-xs text-rose-500">
+                {errors.salary.currency.message}
+              </p>
+            )}
           </div>
         </div>
 
@@ -147,6 +200,11 @@ export default function ApplicationForm({
             Recruiter Name
           </label>
           <Input placeholder="Jane Doe" {...register('recruiterName')} />
+          {errors.recruiterName && (
+            <p className="text-xs text-rose-500">
+              {errors.recruiterName.message}
+            </p>
+          )}
         </div>
         <div className="space-y-1.5">
           <label className="text-xs font-semibold text-slate-700">
@@ -157,6 +215,11 @@ export default function ApplicationForm({
             placeholder="jane@company.com"
             {...register('recruiterEmail')}
           />
+          {errors.recruiterEmail && (
+            <p className="text-xs text-rose-500">
+              {errors.recruiterEmail.message}
+            </p>
+          )}
         </div>
 
         {/* Notes */}
@@ -167,16 +230,28 @@ export default function ApplicationForm({
             className="resize-none h-20"
             {...register('notes')}
           />
+          {errors.notes && (
+            <p className="text-xs text-rose-500">{errors.notes.message}</p>
+          )}
         </div>
       </div>
 
       {/* Form Actions Footer */}
       <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-        <Button type="button" variant="outline" onClick={onSuccess}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onSuccess}
+          disabled={isSubmitting}
+        >
           Cancel
         </Button>
-        <Button type="submit">
-          {mode === 'edit' ? 'Save Changes' : 'Create Application'}
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? 'Saving...'
+            : mode === 'edit'
+              ? 'Save Changes'
+              : 'Create Application'}
         </Button>
       </div>
     </form>

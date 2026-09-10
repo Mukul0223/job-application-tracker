@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '../ui/input';
 import {
   Select,
@@ -42,6 +42,16 @@ export default function ApplicationFilters({
     setPrevFilterSearch(filters.search);
     setSearchTerm(filters.search || '');
   }
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchTerm !== (filters.search || '')) {
+        onFiltersChange({ ...filters, search: searchTerm || undefined });
+      }
+    }, 400);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, filters, onFiltersChange]);
 
   const handleStatusChange = (value) => {
     onFiltersChange({

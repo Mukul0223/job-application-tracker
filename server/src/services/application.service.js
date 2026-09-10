@@ -1,12 +1,12 @@
 const Application = require('../models/Application.model.js');
 const ApiError = require('../utils/ApiError');
 
-// Sort whitelist mapping to protect database internal fields from query injection
-const SORT_WHITELIST = {
-  date: { applicationDate: -1 },
-  company: { companyName: -1 },
-  status: { status: 1 },
-  updated: { updatedAt: -1 },
+// Sort whitelist mapping fields to protect database internal fields from query injection
+const SORT_FIELD_WHITELIST = {
+  date: 'applicationDate',
+  company: 'companyName',
+  status: 'status',
+  updated: 'updatedAt',
 };
 
 /**
@@ -17,6 +17,7 @@ const listApplications = async ({
   status,
   search,
   sortBy = 'date',
+  sortOrder = 'desc',
   page = 1,
   limit = 10,
 }) => {
@@ -32,13 +33,18 @@ const listApplications = async ({
     filter.status = status;
   }
 
-  // 3. Conditionally filter by companyName (case-insensitive partial regex match)
+  // 3. Conditionally search across companyName and jobTitle (case-insensitive partial regex match)
   if (search) {
-    filter.companyName = { $regex: search, $options: 'i' };
+    filter.$or = [
+      { companyName: { $regex: search, $options: 'i' } },
+      { jobTitle: { $regex: search, $options: 'i' } },
+    ];
   }
 
-  // 4. Fallback to default sorting if client passes an unwhitelisted key
-  const sortOption = SORT_WHITELIST[sortBy] || SORT_WHITELIST.date;
+  // 4. Resolve field whitelist and validated direction
+  const sortField = SORT_FIELD_WHITELIST[sortBy] || 'applicationDate';
+  const direction = sortOrder === 'asc' ? 1 : -1;
+  const sortOption = { [sortField]: direction };
 
   // 5. Run standard query and document count concurrently for performance
   const [applications, total] = await Promise.all([

@@ -101,7 +101,11 @@ export default function ApplicationFilters({
           <SelectTrigger className="w-40">
             <div className="flex items-center gap-2 truncate">
               <SlidersHorizontal className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-              <SelectValue />
+              <SelectValue>
+                {(value) =>
+                  STATUS_OPTIONS.find((o) => o.value === value)?.label
+                }
+              </SelectValue>
             </div>
           </SelectTrigger>
           <SelectContent>
@@ -116,7 +120,9 @@ export default function ApplicationFilters({
         {/* Sort Dropdown */}
         <Select value={currentSortValue} onValueChange={handleSortChange}>
           <SelectTrigger className="w-42.5">
-            <SelectValue />
+            <SelectValue>
+              {(value) => SORT_OPTIONS.find((o) => o.value === value)?.label}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {SORT_OPTIONS.map((opt) => (

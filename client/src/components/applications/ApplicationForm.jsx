@@ -38,6 +38,9 @@ export default function ApplicationForm({
       jobTitle: application?.jobTitle || '',
       status: application?.status || 'Wishlist',
       location: application?.location || '',
+      applicationDate: application?.applicationDate
+        ? new Date(application.applicationDate).toISOString().split('T')[0]
+        : '',
       jobUrl: application?.jobUrl || '',
       salary: {
         min: application?.salary?.min ?? '',
@@ -146,6 +149,30 @@ export default function ApplicationForm({
           />
           {errors.location && (
             <p className="text-xs text-rose-500">{errors.location.message}</p>
+          )}
+        </div>
+
+        {/* Application Date */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-semibold text-slate-700">
+            Application Date
+          </label>
+          <Input type="date" {...register('applicationDate')} />
+          {errors.applicationDate && (
+            <p className="text-xs text-rose-500">
+              {errors.applicationDate.message}
+            </p>
+          )}
+        </div>
+
+        {/* Job Posting URL */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-semibold text-slate-700">
+            Job Posting URL
+          </label>
+          <Input type="url" placeholder="https://..." {...register('jobUrl')} />
+          {errors.jobUrl && (
+            <p className="text-xs text-rose-500">{errors.jobUrl.message}</p>
           )}
         </div>
 

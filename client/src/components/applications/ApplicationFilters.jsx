@@ -82,13 +82,13 @@ export default function ApplicationFilters({
           placeholder="Search by company or job title..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-9 pr-8"
+          className="pl-9! pr-8"
         />
         {searchTerm && (
           <button
             type="button"
             onClick={() => setSearchTerm('')}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
           >
             <X className="h-4 w-4" />
           </button>
@@ -98,8 +98,8 @@ export default function ApplicationFilters({
       <div className="flex items-center gap-3 w-full sm:w-auto">
         {/* Status Dropdown */}
         <Select value={currentStatusValue} onValueChange={handleStatusChange}>
-          <SelectTrigger className="w-40">
-            <div className="flex items-center gap-2 truncate">
+          <SelectTrigger className="w-40 cursor-pointer">
+            <div className="flex items-center gap-2 truncate p-1!">
               <SlidersHorizontal className="h-3.5 w-3.5 text-slate-400 shrink-0" />
               <SelectValue>
                 {(value) =>
@@ -110,7 +110,11 @@ export default function ApplicationFilters({
           </SelectTrigger>
           <SelectContent>
             {STATUS_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
+              <SelectItem
+                key={opt.value}
+                value={opt.value}
+                className={'cursor-pointer'}
+              >
                 {opt.label}
               </SelectItem>
             ))}
@@ -119,14 +123,18 @@ export default function ApplicationFilters({
 
         {/* Sort Dropdown */}
         <Select value={currentSortValue} onValueChange={handleSortChange}>
-          <SelectTrigger className="w-42.5">
+          <SelectTrigger className="w-42.5 p-1! cursor-pointer">
             <SelectValue>
               {(value) => SORT_OPTIONS.find((o) => o.value === value)?.label}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {SORT_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
+              <SelectItem
+                key={opt.value}
+                value={opt.value}
+                className={'cursor-pointer'}
+              >
                 {opt.label}
               </SelectItem>
             ))}

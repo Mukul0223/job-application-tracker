@@ -28,7 +28,7 @@ export default function ApplicationTable({ applications = [], onEdit }) {
       <Table>
         <TableHeader className="bg-slate-50/80">
           <TableRow>
-            <TableHead className="font-semibold text-slate-700 py-3.5">
+            <TableHead className="font-semibold text-slate-700 py-3.5 pl-2!">
               Company
             </TableHead>
             <TableHead className="font-semibold text-slate-700 py-3.5">
@@ -40,7 +40,7 @@ export default function ApplicationTable({ applications = [], onEdit }) {
             <TableHead className="font-semibold text-slate-700 py-3.5">
               Applied Date
             </TableHead>
-            <TableHead className="font-semibold text-slate-700 py-3.5 text-right">
+            <TableHead className="font-semibold text-slate-700 py-3.5 pr-2! text-right">
               Actions
             </TableHead>
           </TableRow>
@@ -51,7 +51,7 @@ export default function ApplicationTable({ applications = [], onEdit }) {
               key={app._id}
               className="hover:bg-slate-50/60 transition-colors"
             >
-              <TableCell className="font-semibold text-slate-900 py-3.5">
+              <TableCell className="font-semibold text-slate-900 py-3.5 pl-2!">
                 {app.companyName || app.company}
               </TableCell>
               <TableCell className="text-slate-600 py-3.5">
@@ -84,7 +84,7 @@ export default function ApplicationTable({ applications = [], onEdit }) {
                       variant="ghost"
                       size="sm"
                       onClick={() => onEdit(app)}
-                      className="h-8 w-8 p-0 text-slate-400 hover:text-slate-700"
+                      className="h-8 w-8 p-0 text-slate-400 hover:text-slate-700 cursor-pointer"
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -93,7 +93,7 @@ export default function ApplicationTable({ applications = [], onEdit }) {
                     variant="ghost"
                     size="sm"
                     onClick={() => navigate(`/applications/${app._id}`)}
-                    className="h-8 w-8 p-0 text-slate-400 hover:text-slate-700"
+                    className="h-8 w-8 p-0 text-slate-400 hover:text-slate-700 cursor-pointer"
                   >
                     <ExternalLink className="h-4 w-4" />
                   </Button>

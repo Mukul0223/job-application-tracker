@@ -45,36 +45,30 @@ const DashboardPage = () => {
   };
 
   const applications = data?.applications || [];
-  const totalApplications = data?.total || 0;
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-12">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-6">
+    <div className="min-h-screen bg-slate-50/50 pb-12 pl-1! pr-2!">
+      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-6">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <div className="border border-slate-800 bg-linear-to-r from-slate-900 via-slate-800 to-indigo-950 p-6! text-white shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-white">
                 Job Applications
               </h1>
-              {!isLoading && (
-                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700">
-                  {totalApplications}
-                </span>
-              )}
+              <p className="text-sm text-slate-300 mt-1">
+                Track, organize, and manage your active job search in one place.
+              </p>
             </div>
-            <p className="text-sm text-slate-500 mt-1">
-              Track, organize, and manage your active job search in one place.
-            </p>
-          </div>
 
-          <Button
-            onClick={handleOpenCreateModal}
-            className="inline-flex items-center gap-2 shadow-sm shrink-0"
-          >
-            <Plus className="h-4 w-4" />
-            New Application
-          </Button>
+            <Button
+              onClick={handleOpenCreateModal}
+              className="inline-flex items-center gap-2 shadow-sm shrink-0 p-2! bg-white text-slate-900 hover:bg-slate-100 border-none"
+            >
+              <Plus className="h-4 w-4" />
+              New Application
+            </Button>
+          </div>
         </div>
 
         {/* Filter Bar */}
@@ -112,7 +106,7 @@ const DashboardPage = () => {
 
       {/* Create / Edit Dialog Modal */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-2!">
           <DialogHeader>
             <DialogTitle>
               {editingApplication ? 'Edit Application' : 'Add New Application'}

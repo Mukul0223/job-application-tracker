@@ -75,7 +75,7 @@ export default function ApplicationForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-2">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-2!">
         {/* Company Name */}
         <div className="space-y-1.5">
           <label className="text-xs font-semibold text-slate-700">
@@ -113,7 +113,7 @@ export default function ApplicationForm({
             name="status"
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full cursor-pointer">
                   <SelectValue placeholder="Select Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -270,10 +270,15 @@ export default function ApplicationForm({
           variant="outline"
           onClick={onSuccess}
           disabled={isSubmitting}
+          className={'p-2! cursor-pointer'}
         >
           Cancel
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className={'p-2! cursor-pointer'}
+        >
           {isSubmitting
             ? 'Saving...'
             : mode === 'edit'

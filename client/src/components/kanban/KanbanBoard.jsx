@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { DndContext } from '@dnd-kit/core';
 import KanbanColumn from './KanbanColumn';
+import { useUpdateApplicationStatus } from '@/hooks/useApplications';
 
 const KANBAN_STATUSES = [
   'Wishlist',
@@ -12,14 +12,7 @@ const KANBAN_STATUSES = [
 ];
 
 export default function KanbanBoard({ applications = [] }) {
-  const [localApplications, setLocalApplications] = useState(applications);
-  const [prevApplications, setPrevApplications] = useState(applications);
-
-  // Sync state during render when props change, avoiding an effect callback
-  if (applications !== prevApplications) {
-    setPrevApplications(applications);
-    setLocalApplications(applications);
-  }
+  const { mutate } = useUpdateApplicationStatus();
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -29,24 +22,22 @@ export default function KanbanBoard({ applications = [] }) {
     const appId = active.id;
     const targetStatus = over.id;
 
-    setLocalApplications((prevApps) => {
-      const draggedApp = prevApps.find((app) => app._id === appId);
+    const draggedApp = applications.find((app) => app._id === appId);
 
-      if (!draggedApp || draggedApp.status === targetStatus) {
-        return prevApps;
-      }
+    // Skip if application isn't found or is dropped back into its current column
+    if (!draggedApp || draggedApp.status === targetStatus) {
+      return;
+    }
 
-      return prevApps.map((app) =>
-        app._id === appId ? { ...app, status: targetStatus } : app
-      );
-    });
+    // Fire-and-forget mutation call so TanStack Query handles optimistic UI cache updates immediately
+    mutate({ id: appId, status: targetStatus });
   };
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 pb-6 pt-2 items-start">
         {KANBAN_STATUSES.map((status) => {
-          const columnApps = localApplications.filter(
+          const columnApps = applications.filter(
             (app) => app.status === status
           );
 

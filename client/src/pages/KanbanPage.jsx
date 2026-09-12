@@ -2,7 +2,12 @@ import KanbanBoard from '../components/kanban/KanbanBoard.jsx';
 import { useApplicationsBoard } from '../hooks/useApplications';
 
 export default function KanbanPage() {
-  const { applications, isLoading, isError, error } = useApplicationsBoard();
+  const {
+    data: applications,
+    isLoading,
+    isError,
+    error,
+  } = useApplicationsBoard();
 
   if (isLoading) {
     return (

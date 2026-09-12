@@ -9,16 +9,21 @@ export default function KanbanColumn({ status, applications = [] }) {
   return (
     <div
       ref={setNodeRef}
-      className={`flex flex-col w-72 min-w-70 rounded-lg p-3 border transition-colors ${
+      className={`flex flex-col w-full min-w-0 rounded-lg p-2.5! border transition-colors ${
         isOver
           ? 'bg-blue-50/80 border-blue-400 border-dashed'
           : 'bg-gray-50 border-gray-200'
       }`}
     >
       {/* Column Header */}
-      <div className="flex items-center justify-between mb-3 px-1">
-        <h3 className="font-bold text-gray-700 text-sm">{status}</h3>
-        <span className="text-xs font-semibold text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full">
+      <div className="flex items-center justify-between mb-2.5 px-0.5">
+        <h3
+          className="font-bold text-gray-700 text-xs md:text-sm truncate mr-1"
+          title={status}
+        >
+          {status}
+        </h3>
+        <span className="text-[11px] font-semibold text-gray-500 bg-gray-200 px-1.5 py-0.5 rounded-full shrink-0">
           {applications.length}
         </span>
       </div>

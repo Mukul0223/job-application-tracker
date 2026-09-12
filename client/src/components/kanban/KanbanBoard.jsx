@@ -5,10 +5,10 @@ import KanbanColumn from './KanbanColumn';
 const KANBAN_STATUSES = [
   'Wishlist',
   'Applied',
-  'Interviewing',
+  'Screening',
+  'Interview',
   'Offer',
   'Rejected',
-  'Archived',
 ];
 
 export default function KanbanBoard({ applications = [] }) {
@@ -44,7 +44,7 @@ export default function KanbanBoard({ applications = [] }) {
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
-      <div className="flex gap-4 overflow-x-auto pb-6 pt-2 px-2 items-start">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 pb-6 pt-2 items-start">
         {KANBAN_STATUSES.map((status) => {
           const columnApps = localApplications.filter(
             (app) => app.status === status

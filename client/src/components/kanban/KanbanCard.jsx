@@ -19,7 +19,7 @@ export default function KanbanCard({ application }) {
       style={style}
       {...attributes}
       {...listeners}
-      className="p-3 mb-2 bg-white rounded-md shadow-sm border border-gray-200 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow"
+      className="p-3! mb-2 bg-white rounded-md shadow-sm border border-gray-200 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow"
     >
       <h4 className="font-semibold text-gray-900 text-sm">
         {application.jobTitle}

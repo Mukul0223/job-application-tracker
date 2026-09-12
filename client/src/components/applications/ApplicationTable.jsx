@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import {
   Table,
   TableBody,
@@ -21,8 +20,6 @@ const STATUS_BADGE_STYLES = {
 };
 
 export default function ApplicationTable({ applications = [], onEdit }) {
-  const navigate = useNavigate();
-
   return (
     <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
       <Table>

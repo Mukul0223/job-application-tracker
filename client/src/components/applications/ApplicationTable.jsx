@@ -40,7 +40,7 @@ export default function ApplicationTable({ applications = [], onEdit }) {
             <TableHead className="font-semibold text-slate-700 py-3.5">
               Applied Date
             </TableHead>
-            <TableHead className="font-semibold text-slate-700 py-3.5 pr-2! text-right">
+            <TableHead className="font-semibold text-slate-700 py-3.5 pr-5.5! text-right">
               Actions
             </TableHead>
           </TableRow>
@@ -77,7 +77,7 @@ export default function ApplicationTable({ applications = [], onEdit }) {
                     })
                   : '—'}
               </TableCell>
-              <TableCell className="text-right py-3.5">
+              <TableCell className="text-right py-3.5 pr-3.5!">
                 <div className="flex items-center justify-end gap-1">
                   {onEdit && (
                     <Button
@@ -89,14 +89,18 @@ export default function ApplicationTable({ applications = [], onEdit }) {
                       <Edit className="h-4 w-4" />
                     </Button>
                   )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => navigate(`/applications/${app._id}`)}
-                    className="h-8 w-8 p-0 text-slate-400 hover:text-slate-700 cursor-pointer"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                  </Button>
+                  {app.jobUrl && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        window.open(app.jobUrl, '_blank', 'noopener,noreferrer')
+                      }
+                      className="h-8 w-8 p-0 text-slate-400 hover:text-slate-700 cursor-pointer"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </TableCell>
             </TableRow>

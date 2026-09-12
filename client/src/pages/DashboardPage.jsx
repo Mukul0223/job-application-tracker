@@ -3,6 +3,7 @@ import { useApplications } from '../hooks/useApplications';
 import ApplicationTable from '../components/applications/ApplicationTable';
 import ApplicationFilters from '../components/applications/ApplicationFilters';
 import ApplicationForm from '../components/applications/ApplicationForm';
+import ApplicationCard from '../components/applications/ApplicationCard.jsx';
 import {
   Dialog,
   DialogContent,
@@ -47,8 +48,8 @@ const DashboardPage = () => {
   const applications = data?.applications || [];
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-12 pl-1! pr-2!">
-      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-6">
+    <div className="min-h-screen bg-slate-50/50 pb-12 ">
+      <div className="max-w-full mx-auto px-4! sm:px-6 lg:px-8 pt-8 space-y-6">
         {/* Page Header */}
         <div className="border border-slate-800 bg-linear-to-r from-slate-900 via-slate-800 to-indigo-950 p-6! text-white shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -97,10 +98,23 @@ const DashboardPage = () => {
             </div>
           </div>
         ) : (
-          <ApplicationTable
-            applications={applications}
-            onEdit={handleOpenEditModal}
-          />
+          <>
+            <div className="hidden md:block">
+              <ApplicationTable
+                applications={applications}
+                onEdit={handleOpenEditModal}
+              />
+            </div>
+            <div className="md:hidden space-y-3">
+              {applications.map((app) => (
+                <ApplicationCard
+                  key={app._id}
+                  application={app}
+                  onEdit={handleOpenEditModal}
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
 

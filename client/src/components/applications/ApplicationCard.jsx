@@ -31,7 +31,7 @@ const ApplicationCard = ({ application, onEdit }) => {
     : null;
 
   return (
-    <Card className="hover:shadow-md transition-shadow bg-white border-slate-200">
+    <Card className="hover:shadow-md transition-shadow bg-white border-slate-200 p-2!">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <div className="space-y-1">

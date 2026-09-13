@@ -2,8 +2,12 @@ const Application = require('../models/Application.model.js');
 const Interview = require('../models/Interview.model.js');
 const ApiError = require('../utils/ApiError.js');
 
-const listInterviews = async ({ userId, upcoming }) => {
+const listInterviews = async ({ userId, upcoming, applicationId }) => {
   const filter = { userId };
+
+  if (applicationId) {
+    filter.applicationId = applicationId;
+  }
 
   if (upcoming) {
     filter.scheduledAt = { $gte: new Date() };

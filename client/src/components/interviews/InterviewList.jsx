@@ -82,7 +82,9 @@ export default function InterviewList({ applicationId }) {
 
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
-            <Button size="sm ">Add Interview</Button>
+            <Button size="sm" className={'p-2!'}>
+              Add Interview
+            </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-106.25 p-2!">
             <DialogHeader>
@@ -119,9 +121,9 @@ export default function InterviewList({ applicationId }) {
 
       {/* Interview List */}
       {!isLoading && !isError && interviews.length > 0 && (
-        <div className="space-y-3">
+        <div className="space-y-3!">
           {interviews.map((interview) => (
-            <Card key={interview.id} className="relative">
+            <Card key={interview._id} className="relative p-2!">
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between">
                   <div>
@@ -132,7 +134,10 @@ export default function InterviewList({ applicationId }) {
                       {formatDateTime(interview.scheduledAt)}
                     </CardDescription>
                   </div>
-                  <Badge variant={getOutcomeBadgeVariant(interview.outcome)}>
+                  <Badge
+                    variant={getOutcomeBadgeVariant(interview.outcome)}
+                    className={'p-2!'}
+                  >
                     {interview.outcome}
                   </Badge>
                 </div>
@@ -155,19 +160,21 @@ export default function InterviewList({ applicationId }) {
                 )}
 
                 {/* Actions */}
-                <div className="flex justify-end space-x-2 pt-2">
+                <div className="flex justify-end space-x-2! pt-2">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => setEditingInterview(interview)}
+                    className={'p-2!'}
                   >
                     Edit
                   </Button>
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => handleDelete(interview.id)}
+                    onClick={() => handleDelete(interview._id)}
                     disabled={deleteInterview.isPending}
+                    className={'p-2!'}
                   >
                     Delete
                   </Button>
@@ -183,7 +190,7 @@ export default function InterviewList({ applicationId }) {
         open={Boolean(editingInterview)}
         onOpenChange={(open) => !open && setEditingInterview(null)}
       >
-        <DialogContent className="sm:max-w-106.25">
+        <DialogContent className="sm:max-w-106.25 p-2!">
           <DialogHeader>
             <DialogTitle>Edit Interview</DialogTitle>
           </DialogHeader>

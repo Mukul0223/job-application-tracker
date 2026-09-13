@@ -82,10 +82,10 @@ export default function ApplicationDetailPage() {
         </Card>
 
         {/* Right Column: Interviews & Milestone 12 Placeholders */}
-        <div className="space-y-6">
+        <div className="space-y-6!">
           {/* Interview List Section */}
           <Card>
-            <CardContent>
+            <CardContent className={'p-2!'}>
               <InterviewList applicationId={id} />
             </CardContent>
           </Card>

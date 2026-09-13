@@ -29,7 +29,7 @@ const useUpdateInterview = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: updateInterview,
+    mutationFn: ({ id, data }) => updateInterview(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['interviews'] });
     },

@@ -9,6 +9,7 @@ import {
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Edit, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const STATUS_BADGE_STYLES = {
   Wishlist: 'bg-slate-100 text-slate-700 border-slate-200',
@@ -49,7 +50,12 @@ export default function ApplicationTable({ applications = [], onEdit }) {
               className="hover:bg-slate-50/60 transition-colors"
             >
               <TableCell className="font-semibold text-slate-900 py-3.5 pl-2!">
-                {app.companyName || app.company}
+                <Link
+                  to={`/applications/${app._id}`}
+                  className="font-semibold text-slate-900 hover:underline"
+                >
+                  {app.companyName || app.company}
+                </Link>
               </TableCell>
               <TableCell className="text-slate-600 py-3.5">
                 {app.jobTitle || app.position}

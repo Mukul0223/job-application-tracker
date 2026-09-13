@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-const INTERVIEW_TYPES = ['Phone', 'Technical', 'Onsite', 'Final ', 'Other'];
+const INTERVIEW_TYPES = ['Phone', 'Technical', 'Onsite', 'Final', 'Other'];
 
 const OUTCOME_OPTIONS = ['Pending', 'Passed', 'Failed'];
 
@@ -57,11 +57,11 @@ export default function InterviewForm({
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const isEdit = mode === 'edit' && interview?.id;
+    const isEdit = mode === 'edit' && interview?._id;
     const mutation = isEdit ? updateInterview : createInterview;
 
     const payload = isEdit
-      ? { id: interview.id, ...formData }
+      ? { id: interview._id, ...formData }
       : { applicationId, ...formData };
 
     mutation.mutate(payload, {

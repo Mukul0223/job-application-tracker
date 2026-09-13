@@ -61,7 +61,7 @@ export default function InterviewForm({
     const mutation = isEdit ? updateInterview : createInterview;
 
     const payload = isEdit
-      ? { id: interview._id, ...formData }
+      ? { id: interview._id, data: formData }
       : { applicationId, ...formData };
 
     mutation.mutate(payload, {

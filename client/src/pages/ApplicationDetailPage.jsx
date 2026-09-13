@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useApplication } from '../hooks/useApplications';
 import ApplicationForm from '../components/applications/ApplicationForm';
 import InterviewList from '../components/interviews/InterviewList';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Card,
   CardHeader,
@@ -29,9 +29,12 @@ export default function ApplicationDetailPage() {
     return (
       <div className="container mx-auto p-6 max-w-4xl space-y-4">
         <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm" asChild>
-            <Link to="/dashboards">← Back to Applications</Link>
-          </Button>
+          <Link
+            to="/dashboard"
+            className={buttonVariants({ variant: 'outline', size: 'sm' })}
+          >
+            ← Back to Applications
+          </Link>
         </div>
         <Card className="border-destructive/50 bg-destructive/5">
           <CardHeader>
@@ -52,9 +55,12 @@ export default function ApplicationDetailPage() {
     <div className="container mx-auto p-6! max-w-full space-y-8">
       {/* Top Navigation */}
       <div className="flex items-center justify-between pb-2!">
-        <Button variant="outline" size="sm" asChild className={'p-2!'}>
-          <Link to="/dashboard">← Back to Applications</Link>
-        </Button>
+        <Link
+          to="/dashboard"
+          className={`${buttonVariants({ variant: 'outline', size: 'sm' })}`}
+        >
+          ← Back to Applications
+        </Link>
         <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
           Application Details
         </span>

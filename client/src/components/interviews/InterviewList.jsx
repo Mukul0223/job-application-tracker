@@ -81,11 +81,13 @@ export default function InterviewList({ applicationId }) {
         <h3 className="text-lg font-semibold tracking-tight">Interviews</h3>
 
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" className={'p-2!'}>
-              Add Interview
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button size="sm" className={'p-2!'}>
+                Add Interview
+              </Button>
+            }
+          />
           <DialogContent className="sm:max-w-106.25 p-2!">
             <DialogHeader>
               <DialogTitle>Schedule Interview</DialogTitle>

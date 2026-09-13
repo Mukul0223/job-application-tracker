@@ -8,8 +8,19 @@ import {
 } from '../ui/table';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Edit, ExternalLink } from 'lucide-react';
+import { Edit, ExternalLink, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '../ui/alert-dialog';
 
 const STATUS_BADGE_STYLES = {
   Wishlist: 'bg-slate-100 text-slate-700 border-slate-200',
@@ -20,7 +31,11 @@ const STATUS_BADGE_STYLES = {
   Rejected: 'bg-rose-50 text-rose-700 border-rose-200',
 };
 
-export default function ApplicationTable({ applications = [], onEdit }) {
+export default function ApplicationTable({
+  applications = [],
+  onEdit,
+  deleteMutation,
+}) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
       <Table>
@@ -38,7 +53,7 @@ export default function ApplicationTable({ applications = [], onEdit }) {
             <TableHead className="font-semibold text-slate-700 py-3.5">
               Applied Date
             </TableHead>
-            <TableHead className="font-semibold text-slate-700 py-3.5 pr-5.5! text-right">
+            <TableHead className="font-semibold text-slate-700 py-3.5 pr-10! text-right">
               Actions
             </TableHead>
           </TableRow>
@@ -104,6 +119,40 @@ export default function ApplicationTable({ applications = [], onEdit }) {
                       <ExternalLink className="h-4 w-4" />
                     </Button>
                   )}
+                  <AlertDialog>
+                    <AlertDialogTrigger
+                      render={
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-slate-400 hover:text-rose-600 cursor-pointer"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      }
+                    />
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Delete this application?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will permanently delete your application to{' '}
+                          {app.companyName || app.company}. This can't be
+                          undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          variant="destructive"
+                          onClick={() => deleteMutation?.mutate(app._id)}
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </TableCell>
             </TableRow>

@@ -8,7 +8,25 @@ import {
 } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Building2, Calendar, MapPin, ExternalLink, Edit } from 'lucide-react';
+import {
+  Building2,
+  Calendar,
+  MapPin,
+  ExternalLink,
+  Edit,
+  Trash2,
+} from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '../ui/alert-dialog';
 
 const STATUS_BADGE_STYLES = {
   Wishlist: 'bg-slate-100 text-slate-800 border-slate-200',
@@ -19,7 +37,7 @@ const STATUS_BADGE_STYLES = {
   Rejected: 'bg-rose-100 text-rose-800 border-rose-200',
 };
 
-const ApplicationCard = ({ application, onEdit }) => {
+const ApplicationCard = ({ application, onEdit, deleteMutation }) => {
   if (!application) return null;
 
   const formattedDate = application.applicationDate
@@ -73,18 +91,50 @@ const ApplicationCard = ({ application, onEdit }) => {
       </CardContent>
 
       <CardFooter className="pt-4 flex items-center justify-between border-t border-slate-100 mt-3">
-        {onEdit ? (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onEdit(application)}
-            className="h-8 text-xs text-slate-600 hover:text-slate-900 px-2"
-          >
-            <Edit className="w-3.5 h-3.5 mr-1" /> Edit
-          </Button>
-        ) : (
-          <div />
-        )}
+        <div className="flex items-center gap-1">
+          {onEdit && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onEdit(application)}
+              className="h-8 text-xs text-slate-600 hover:text-slate-900 px-2! cursor-pointer"
+            >
+              <Edit className="w-3.5 h-3.5 mr-1" /> Edit
+            </Button>
+          )}
+          <AlertDialog>
+            <AlertDialogTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 text-xs text-slate-400 hover:text-rose-600 px-2! cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete
+                </Button>
+              }
+            />
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete this application?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete your application to{' '}
+                  {application.companyName || application.company}. This can't
+                  be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  variant="destructive"
+                  onClick={() => deleteMutation?.mutate(application._id)}
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
 
         <Link
           to={`/applications/${application._id}`}

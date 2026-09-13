@@ -15,7 +15,9 @@ const listInterviews = async ({ userId, upcoming, applicationId }) => {
 
   const sortOption = upcoming ? { scheduledAt: 1 } : { scheduledAt: -1 };
 
-  const interviews = await Interview.find(filter).sort(sortOption);
+  const interviews = await Interview.find(filter)
+    .sort(sortOption)
+    .populate('applicationId', 'companyName jobTitle');
 
   return interviews;
 };

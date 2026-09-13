@@ -47,9 +47,17 @@ const useDeleteInterview = () => {
   });
 };
 
+const useUpcomingInterviews = () => {
+  return useQuery({
+    queryKey: ['interviews', 'upcoming'],
+    queryFn: () => getInterviews({ upcoming: true }),
+  });
+};
+
 export {
   useInterviews,
   useCreateInterview,
   useUpdateInterview,
   useDeleteInterview,
+  useUpcomingInterviews,
 };

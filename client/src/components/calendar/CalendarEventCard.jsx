@@ -19,7 +19,7 @@ export const CalendarEventCard = ({ interview }) => {
       to={applicationIdStr ? `/applications/${applicationIdStr}` : '#'}
       className="block group rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
     >
-      <div className="bg-card hover:bg-accent/60 border border-border/80 rounded-lg p-3 shadow-sm transition-colors duration-150 flex flex-col gap-2">
+      <div className="bg-card hover:bg-accent/60 border border-border/80 rounded-lg p-3! shadow-sm transition-colors duration-150 flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
           <Badge
             variant="secondary"

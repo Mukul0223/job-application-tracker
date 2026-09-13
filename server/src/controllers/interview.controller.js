@@ -5,8 +5,13 @@ const listInterviews = async (req, res) => {
   const userId = req.dbUserId;
 
   const upcoming = req.query.upcoming === 'true';
+  const { applicationId } = req.query;
 
-  const result = await interviewService.listInterviews({ userId, upcoming });
+  const result = await interviewService.listInterviews({
+    userId,
+    upcoming,
+    applicationId,
+  });
 
   res
     .status(200)

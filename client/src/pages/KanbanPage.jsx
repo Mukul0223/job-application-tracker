@@ -29,12 +29,12 @@ export default function KanbanPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-3!">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">
           Application Pipeline
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-500 mt-1 pb-2!">
           Drag and drop cards between status lanes to manage your job search
           pipeline.
         </p>

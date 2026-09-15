@@ -43,6 +43,7 @@ export const useCreateApplication = () => {
     onSuccess: () => {
       // Refresh all cached queries matching ['applications', ...]
       queryClient.invalidateQueries({ queryKey: ['applications'] });
+      queryClient.invalidateQueries({ queryKey: ['analytics'] });
     },
   });
 };
@@ -81,6 +82,7 @@ export const useUpdateApplicationStatus = () => {
     onSettled: () => {
       // Re-sync with backend data to ensure full consistency
       queryClient.invalidateQueries({ queryKey: ['applications'] });
+      queryClient.invalidateQueries({ queryKey: ['analytics'] });
     },
   });
 };
@@ -93,6 +95,7 @@ export const useUpdateApplication = () => {
     mutationFn: ({ id, data }) => updateApplication(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['applications'] });
+      queryClient.invalidateQueries({ queryKey: ['analytics'] });
     },
   });
 };
@@ -109,6 +112,7 @@ export const useDeleteApplication = () => {
         predicate: (query) =>
           !(query.queryKey.length === 2 && query.queryKey[1] === deletedId),
       });
+      queryClient.invalidateQueries({ queryKey: ['analytics'] });
     },
   });
 };

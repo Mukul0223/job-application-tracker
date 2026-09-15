@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { useApplications } from '../hooks/useApplications';
+import {
+  useApplications,
+  useDeleteApplication,
+} from '../hooks/useApplications';
 import ApplicationTable from '../components/applications/ApplicationTable';
 import ApplicationFilters from '../components/applications/ApplicationFilters';
 import ApplicationForm from '../components/applications/ApplicationForm';
@@ -27,8 +30,9 @@ const DashboardPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingApplication, setEditingApplication] = useState(null);
 
-  // Fetch applications with active filters via TanStack Query
+  // Fetch applications & initialize delete mutation hook
   const { data, isLoading, isError, error } = useApplications(filters);
+  const deleteMutation = useDeleteApplication();
 
   const handleOpenCreateModal = () => {
     setEditingApplication(null);
@@ -103,6 +107,7 @@ const DashboardPage = () => {
               <ApplicationTable
                 applications={applications}
                 onEdit={handleOpenEditModal}
+                deleteMutation={deleteMutation}
               />
             </div>
             <div className="md:hidden space-y-3">
@@ -111,6 +116,7 @@ const DashboardPage = () => {
                   key={app._id}
                   application={app}
                   onEdit={handleOpenEditModal}
+                  deleteMutation={deleteMutation}
                 />
               ))}
             </div>
@@ -142,4 +148,5 @@ const DashboardPage = () => {
     </div>
   );
 };
+
 export default DashboardPage;

@@ -1,8 +1,9 @@
-import { useParams, Link } from 'react-router-dom';
-import { useApplication } from '../hooks/useApplications';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useApplication, useDeleteApplication } from '../hooks/useApplications';
 import ApplicationForm from '../components/applications/ApplicationForm';
 import InterviewList from '../components/interviews/InterviewList';
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Trash2 } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -10,10 +11,23 @@ import {
   CardDescription,
   CardContent,
 } from '@/components/ui/card';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export default function ApplicationDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data: application, isLoading, isError, error } = useApplication(id);
+  const deleteMutation = useDeleteApplication();
 
   if (isLoading) {
     return (
@@ -70,11 +84,55 @@ export default function ApplicationDetailPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         {/* Left Column: Edit Application Form */}
         <Card>
-          <CardHeader className={'p-2!'}>
-            <CardTitle>Edit Application</CardTitle>
-            <CardDescription>
-              Update company details, position info, or application status.
-            </CardDescription>
+          <CardHeader className="p-2! flex flex-row items-start justify-between space-y-0">
+            <div>
+              <CardTitle>Edit Application</CardTitle>
+              <CardDescription>
+                Update company details, position info, or application status.
+              </CardDescription>
+            </div>
+
+            <AlertDialog>
+              <AlertDialogTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="sr-only">Delete Application</span>
+                  </Button>
+                }
+              />
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    your application for{' '}
+                    <span className="font-semibold text-foreground">
+                      {application.companyName}
+                    </span>{' '}
+                    and remove all associated data.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    onClick={() =>
+                      deleteMutation.mutate(application._id, {
+                        onSuccess: () => navigate('/dashboard'),
+                      })
+                    }
+                    disabled={deleteMutation.isPending}
+                  >
+                    {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </CardHeader>
           <CardContent>
             <ApplicationForm

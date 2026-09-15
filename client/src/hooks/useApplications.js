@@ -103,8 +103,12 @@ export const useDeleteApplication = () => {
 
   return useMutation({
     mutationFn: deleteApplication,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['applications'] });
+    onSuccess: (_data, deletedId) => {
+      queryClient.invalidateQueries({
+        queryKey: ['applications'],
+        predicate: (query) =>
+          !(query.queryKey.length === 2 && query.queryKey[1] === deletedId),
+      });
     },
   });
 };

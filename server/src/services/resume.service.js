@@ -64,7 +64,8 @@ const deleteResume = async ({ userId, id }) => {
 
   if (cloudResult.result !== 'ok' && cloudResult.result !== 'not found') {
     throw new ApiError(
-      (500, `Failed to delete file from Cloudinary: ${cloudResult.result}`)
+      500,
+      `Failed to delete file from Cloudinary: ${cloudResult.result}`
     );
   }
 

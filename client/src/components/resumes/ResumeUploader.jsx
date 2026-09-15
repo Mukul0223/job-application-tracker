@@ -68,10 +68,7 @@ export default function ResumeUploader() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-
-    uploadMutation.mutate(formData, {
+    uploadMutation.mutate(selectedFile, {
       onSuccess: () => {
         setSuccessMessage('Resume uploaded successfully!');
         setSelectedFile(null);

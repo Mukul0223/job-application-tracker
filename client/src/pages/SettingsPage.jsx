@@ -11,7 +11,7 @@ import { FileText, Settings } from 'lucide-react';
 
 export default function SettingsPage() {
   return (
-    <div className="container mx-auto p-6! max-w-6xl space-y-8!">
+    <div className="container mx-auto p-6! max-w-full space-y-8!">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4! pb-6! border-b border-slate-200">
         <div>

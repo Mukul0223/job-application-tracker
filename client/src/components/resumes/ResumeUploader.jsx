@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useUploadResume } from '../../hooks/useResumes.js';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -18,6 +18,17 @@ export default function ResumeUploader() {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const fileInputRef = useRef(null);
+
+  // Automatically clear the success message after 4 seconds
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage(null);
+      }, 4000);
+
+      return () => clearTimeout(timer); // Clean up timeout on unmount or reset
+    }
+  }, [successMessage]);
 
   const uploadMutation = useUploadResume();
 

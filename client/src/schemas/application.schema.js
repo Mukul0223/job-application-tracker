@@ -34,4 +34,5 @@ export const applicationFormSchema = z.object({
     z.string().email('Invalid email address').optional()
   ),
   notes: z.preprocess(emptyToUndefined, z.string().optional()),
+  resumeId: z.preprocess(emptyToUndefined, z.string().optional()),
 });

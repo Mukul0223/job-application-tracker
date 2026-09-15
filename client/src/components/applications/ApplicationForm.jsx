@@ -5,6 +5,7 @@ import {
   useCreateApplication,
   useUpdateApplication,
 } from '../../hooks/useApplications.js';
+import { useResumes } from '../../hooks/useResumes.js';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
@@ -23,6 +24,7 @@ export default function ApplicationForm({
 }) {
   const createMutation = useCreateApplication();
   const updateMutation = useUpdateApplication();
+  const { data: resumes = [] } = useResumes();
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
@@ -38,6 +40,7 @@ export default function ApplicationForm({
       jobTitle: application?.jobTitle || '',
       status: application?.status || 'Wishlist',
       location: application?.location || '',
+      resumeId: application?.resumeId?._id || application?.resumeId || '',
       applicationDate: application?.applicationDate
         ? new Date(application.applicationDate).toISOString().split('T')[0]
         : '',
@@ -74,10 +77,10 @@ export default function ApplicationForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-2">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-2!">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4! pt-2!">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4! p-2!">
         {/* Company Name */}
-        <div className="space-y-1.5">
+        <div className="space-y-1.5!">
           <label className="text-xs font-semibold text-slate-700">
             Company Name *
           </label>
@@ -90,7 +93,7 @@ export default function ApplicationForm({
         </div>
 
         {/* Job Title */}
-        <div className="space-y-1.5">
+        <div className="space-y-1.5!">
           <label className="text-xs font-semibold text-slate-700">
             Job Title *
           </label>
@@ -104,7 +107,7 @@ export default function ApplicationForm({
         </div>
 
         {/* Status */}
-        <div className="space-y-1.5">
+        <div className="space-y-1.5!">
           <label className="text-xs font-semibold text-slate-700">
             Status *
           </label>
@@ -113,7 +116,7 @@ export default function ApplicationForm({
             name="status"
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger className="w-full cursor-pointer">
+                <SelectTrigger className="w-full! cursor-pointer">
                   <SelectValue placeholder="Select Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -139,7 +142,7 @@ export default function ApplicationForm({
         </div>
 
         {/* Location */}
-        <div className="space-y-1.5">
+        <div className="space-y-1.5!">
           <label className="text-xs font-semibold text-slate-700">
             Location
           </label>
@@ -152,8 +155,63 @@ export default function ApplicationForm({
           )}
         </div>
 
+        {/* Attached Resume Selection */}
+        {/* Attached Resume Selection */}
+        <div className="space-y-1.5!">
+          <label className="text-xs font-semibold text-slate-700">
+            Attached Resume
+          </label>
+          <Controller
+            control={control}
+            name="resumeId"
+            render={({ field }) => {
+              // Find the active resume from the fetched resumes array
+              const selectedResume = resumes.find(
+                (r) => (r._id || r.id) === field.value
+              );
+
+              // Determine label to show, supporting populated backend objects
+              const displayLabel = selectedResume
+                ? `${selectedResume.fileName} (v${selectedResume.version})`
+                : typeof application?.resumeId === 'object' &&
+                    application?.resumeId?.fileName
+                  ? `${application.resumeId.fileName} (v${application.resumeId.version || 1})`
+                  : null;
+
+              return (
+                <Select
+                  onValueChange={(val) =>
+                    field.onChange(val === 'none' ? '' : val)
+                  }
+                  value={field.value || 'none'}
+                >
+                  <SelectTrigger className="w-full! cursor-pointer">
+                    <SelectValue placeholder="Select Resume">
+                      {displayLabel}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    {resumes.map((resume) => {
+                      const rId = resume._id || resume.id;
+                      return (
+                        <SelectItem key={rId} value={rId}>
+                          {resume.fileName} (v{resume.version})
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              );
+            }}
+          />
+          {errors.resumeId && (
+            <p className="text-xs text-rose-500">{errors.resumeId.message}</p>
+          )}
+        </div>
+
         {/* Application Date */}
-        <div className="space-y-1.5">
+        <div className="space-y-1.5!">
           <label className="text-xs font-semibold text-slate-700">
             Application Date
           </label>
@@ -166,7 +224,7 @@ export default function ApplicationForm({
         </div>
 
         {/* Job Posting URL */}
-        <div className="space-y-1.5">
+        <div className="space-y-1.5! md:col-span-2">
           <label className="text-xs font-semibold text-slate-700">
             Job Posting URL
           </label>
@@ -177,8 +235,8 @@ export default function ApplicationForm({
         </div>
 
         {/* Salary Row */}
-        <div className="md:col-span-2 grid grid-cols-3 gap-3">
-          <div className="space-y-1.5">
+        <div className="md:col-span-2 grid grid-cols-3 gap-3!">
+          <div className="space-y-1.5!">
             <label className="text-xs font-semibold text-slate-700">
               Min Salary
             </label>
@@ -193,7 +251,7 @@ export default function ApplicationForm({
               </p>
             )}
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-1.5!">
             <label className="text-xs font-semibold text-slate-700">
               Max Salary
             </label>
@@ -208,7 +266,7 @@ export default function ApplicationForm({
               </p>
             )}
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-1.5!">
             <label className="text-xs font-semibold text-slate-700">
               Currency
             </label>
@@ -222,7 +280,7 @@ export default function ApplicationForm({
         </div>
 
         {/* Recruiter Details */}
-        <div className="space-y-1.5">
+        <div className="space-y-1.5!">
           <label className="text-xs font-semibold text-slate-700">
             Recruiter Name
           </label>
@@ -233,7 +291,7 @@ export default function ApplicationForm({
             </p>
           )}
         </div>
-        <div className="space-y-1.5">
+        <div className="space-y-1.5!">
           <label className="text-xs font-semibold text-slate-700">
             Recruiter Email
           </label>
@@ -250,11 +308,11 @@ export default function ApplicationForm({
         </div>
 
         {/* Notes */}
-        <div className="md:col-span-2 space-y-1.5">
+        <div className="md:col-span-2 space-y-1.5!">
           <label className="text-xs font-semibold text-slate-700">Notes</label>
           <Textarea
             placeholder="Key requirements, referral details..."
-            className="resize-none h-20"
+            className="resize-none h-20!"
             {...register('notes')}
           />
           {errors.notes && (
@@ -264,20 +322,20 @@ export default function ApplicationForm({
       </div>
 
       {/* Form Actions Footer */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+      <div className="flex items-center justify-end gap-3! pt-4! border-t border-slate-100">
         <Button
           type="button"
           variant="outline"
           onClick={onSuccess}
           disabled={isSubmitting}
-          className={'p-2! cursor-pointer'}
+          className="p-2! cursor-pointer"
         >
           Cancel
         </Button>
         <Button
           type="submit"
           disabled={isSubmitting}
-          className={'p-2! cursor-pointer'}
+          className="p-2! cursor-pointer"
         >
           {isSubmitting
             ? 'Saving...'

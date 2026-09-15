@@ -2,8 +2,9 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useApplication, useDeleteApplication } from '../hooks/useApplications';
 import ApplicationForm from '../components/applications/ApplicationForm';
 import InterviewList from '../components/interviews/InterviewList';
+import ResumeList from '../components/resumes/ResumeList';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
+import { Trash2, FileText } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -31,7 +32,7 @@ export default function ApplicationDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-6 max-w-4xl space-y-4">
+      <div className="container mx-auto p-6! max-w-4xl space-y-4!">
         <p className="text-sm text-muted-foreground">
           Loading application details...
         </p>
@@ -41,7 +42,7 @@ export default function ApplicationDetailPage() {
 
   if (isError || !application) {
     return (
-      <div className="container mx-auto p-6 max-w-4xl space-y-4">
+      <div className="container mx-auto p-6! max-w-4xl space-y-4!">
         <div className="flex items-center space-x-2">
           <Link
             to="/dashboard"
@@ -51,7 +52,7 @@ export default function ApplicationDetailPage() {
           </Link>
         </div>
         <Card className="border-destructive/50 bg-destructive/5">
-          <CardHeader>
+          <CardHeader className="p-6!">
             <CardTitle className="text-destructive">
               Application Not Found
             </CardTitle>
@@ -66,7 +67,7 @@ export default function ApplicationDetailPage() {
   }
 
   return (
-    <div className="container mx-auto p-6! max-w-full space-y-8">
+    <div className="container mx-auto p-6! max-w-full space-y-8!">
       {/* Top Navigation */}
       <div className="flex items-center justify-between pb-2!">
         <Link
@@ -81,13 +82,13 @@ export default function ApplicationDetailPage() {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6! items-start">
         {/* Left Column: Edit Application Form */}
         <Card>
-          <CardHeader className="p-2! flex flex-row items-start justify-between space-y-0">
+          <CardHeader className="p-6! pb-2! flex flex-row items-start justify-between space-y-0">
             <div>
               <CardTitle>Edit Application</CardTitle>
-              <CardDescription>
+              <CardDescription className="mt-1!">
                 Update company details, position info, or application status.
               </CardDescription>
             </div>
@@ -98,29 +99,31 @@ export default function ApplicationDetailPage() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0 p-2!"
                   >
                     <Trash2 className="h-4 w-4" />
                     <span className="sr-only">Delete Application</span>
                   </Button>
                 }
               />
-              <AlertDialogContent>
-                <AlertDialogHeader>
+              <AlertDialogContent className="p-6!">
+                <AlertDialogHeader className="space-y-2!">
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
+                  <AlertDialogDescription className="text-xs leading-relaxed text-slate-600">
                     This action cannot be undone. This will permanently delete
                     your application for{' '}
-                    <span className="font-semibold text-foreground">
+                    <span className="font-semibold text-slate-900">
                       {application.companyName}
                     </span>{' '}
                     and remove all associated data.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogFooter className="gap-2! mt-4!">
+                  <AlertDialogCancel className="px-4! py-2! text-xs">
+                    Cancel
+                  </AlertDialogCancel>
                   <AlertDialogAction
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    className="bg-rose-600 hover:bg-rose-700 text-white px-4! py-2! text-xs font-medium"
                     onClick={() =>
                       deleteMutation.mutate(application._id, {
                         onSuccess: () => navigate('/dashboard'),
@@ -134,7 +137,7 @@ export default function ApplicationDetailPage() {
               </AlertDialogContent>
             </AlertDialog>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6! pt-0!">
             <ApplicationForm
               mode="edit"
               application={application}
@@ -145,26 +148,34 @@ export default function ApplicationDetailPage() {
           </CardContent>
         </Card>
 
-        {/* Right Column: Interviews & Milestone 12 Placeholders */}
+        {/* Right Column: Interviews & Resumes */}
         <div className="space-y-6!">
           {/* Interview List Section */}
           <Card>
-            <CardContent className={'p-2!'}>
+            <CardContent className="p-4!">
               <InterviewList applicationId={id} />
             </CardContent>
           </Card>
 
-          {/* Honest Gap: Resume Section Placeholder */}
-          <Card className="border-dashed bg-muted/20 p-2!">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Resume & Documents
+          {/* Resumes & Documents Section */}
+          <Card>
+            <CardHeader className="p-6! pb-4!">
+              <div className="flex items-center gap-2! text-slate-700 mb-1!">
+                <FileText className="h-5 w-5 text-blue-600" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Documents
+                </span>
+              </div>
+              <CardTitle className="text-lg font-semibold text-slate-900">
+                Resumes
               </CardTitle>
-              <CardDescription className="text-xs">
-                Resume attachment, document storage, and AI tailoring feature
-                arrive in Milestone 12.
+              <CardDescription className="text-xs text-slate-500">
+                Manage and view your uploaded resume versions.
               </CardDescription>
             </CardHeader>
+            <CardContent className="p-6! pt-0!">
+              <ResumeList />
+            </CardContent>
           </Card>
         </div>
       </div>

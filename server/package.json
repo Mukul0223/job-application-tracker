@@ -1,6 +1,9 @@
 {
-  "name": "server",
+  "name": "job-tracker-backend",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=24.13.1"
+  },
   "description": "",
   "main": "server.js",
   "scripts": {
